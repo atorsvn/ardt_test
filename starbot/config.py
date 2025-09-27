@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from functools import lru_cache
 from urllib.parse import urlparse
 
@@ -32,14 +33,12 @@ class Settings(BaseModel):
     @classmethod
     def trim_token(cls, value: str) -> str:
         """Normalize optional Discord token values."""
-
         return value.strip()
 
     @field_validator("ollama_host")
     @classmethod
     def validate_ollama_host(cls, value: str) -> str:
         """Ensure the Ollama host is a valid HTTP(S) URL."""
-
         parsed = urlparse(value)
         if parsed.scheme not in {"http", "https"} or not parsed.netloc:
             raise ValueError("OLLAMA_HOST must be an absolute HTTP(S) URL")
@@ -49,7 +48,6 @@ class Settings(BaseModel):
     @classmethod
     def validate_index_path(cls, value: str) -> str:
         """Ensure the FAISS index path is populated."""
-
         if not value.strip():
             raise ValueError("FAISS_INDEX_PATH must not be empty")
         return value
@@ -57,7 +55,6 @@ class Settings(BaseModel):
     @classmethod
     def load(cls) -> "Settings":
         """Load configuration from environment variables with validation."""
-
         try:
             return cls(**_coerce_environment())
         except ValidationError as exc:  # pragma: no cover - defensive guard
@@ -67,15 +64,11 @@ class Settings(BaseModel):
 
 def _iter_environment() -> dict[str, str | None]:
     """Collect environment variables used by the settings model."""
-
-    import os
-
     return {key: os.environ.get(key) for key in _ENV_TO_FIELD}
 
 
 def _coerce_environment() -> dict[str, str]:
     """Return environment values excluding missing keys."""
-
     raw = _iter_environment()
     settings_dict: dict[str, str] = {}
     for env_key, value in raw.items():
@@ -89,7 +82,6 @@ def _coerce_environment() -> dict[str, str]:
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
     """Return cached application settings."""
-
     return Settings(**_coerce_environment())
 
 

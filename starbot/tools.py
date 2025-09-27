@@ -49,14 +49,18 @@ class WeatherTool:
             raise ToolError("Weather API key missing.")
         params = {"key": self.api_key, "q": location, "aqi": "no"}
         try:
+            # Use a timeout for network resilience
             response = requests.get(self.base_url, params=params, timeout=5)
         except RequestException as exc:  # pragma: no cover - network failure path
             raise ToolError("Weather service unreachable.") from exc
+
         if response.status_code != 200:
             raise ToolError(f"Weather API error: {response.status_code} {response.text}")
+
         payload: dict[str, Any] = response.json()
         current = payload.get("current", {})
         condition = current.get("condition", {})
+
         return WeatherResult(
             location=payload.get("location", {}).get("name", location),
             description=condition.get("text", "Unavailable"),
@@ -83,19 +87,26 @@ class WikipediaTool:
             "gsrlimit": 1,
             "gsrsearch": query,
         }
+
         try:
+            # Use a timeout for network resilience
             response = requests.get(self.base_url, params=params, timeout=5)
         except RequestException as exc:  # pragma: no cover - network failure path
             raise ToolError("Wikipedia service unreachable.") from exc
+
         if response.status_code != 200:
             raise ToolError(f"Wikipedia API error: {response.status_code} {response.text}")
+
         payload: dict[str, Any] = response.json()
         pages = payload.get("query", {}).get("pages", {})
+
         if not pages:
             raise ToolError("No Wikipedia results found.")
+
         page = next(iter(pages.values()))
         title = page.get("title", "Unknown")
         extract = page.get("extract", "No summary available.")
+
         return f"{title}: {extract}"
 
 
