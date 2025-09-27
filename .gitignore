@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+data/*.index
+data/*.json
+.env
+.venv/
+starbot.egg-info/
