@@ -1,5 +1,3 @@
-# StarBot
-
 StarBot is a Discord assistant that responds to user questions using an Ollama-hosted LLM, a FAISS-powered memory, and lightweight tool integrations for weather and Wikipedia lookups.
 
 ## Features
@@ -21,44 +19,3 @@ StarBot is a Discord assistant that responds to user questions using an Ollama-h
 python -m venv .venv
 source .venv/bin/activate
 pip install -e .
-```
-
-### Configuration
-Set the following environment variables:
-- `DISCORD_TOKEN` (required)
-- `WEATHER_API_KEY` (optional)
-- `OLLAMA_HOST` (default `http://localhost:11434`)
-- `FAISS_INDEX_PATH` (default `data/memory.index`)
-- `RESPONSE_TIMEOUT_SECONDS` (default `8`)
-- `MAX_CONTEXT_MESSAGES` (default `8`)
-
-### Running Locally
-```bash
-python main.py
-```
-
-## Docker
-Build and run the container:
-```bash
-docker build -t starbot .
-docker run --gpus all -e DISCORD_TOKEN=your_token -e WEATHER_API_KEY=your_key starbot
-```
-
-## Project Structure
-```
-starbot/
-  agent.py
-  config.py
-  discord_bot.py
-  llm.py
-  memory.py
-  tools.py
-main.py
-```
-
-## Development
-- Linting and testing can be configured via GitHub Actions
-- Extend `starbot/tools.py` to add more integrations
-
-## License
-MIT
